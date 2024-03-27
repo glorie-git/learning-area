@@ -15,6 +15,8 @@ const App = () => {
   const getRandom = (max) => {
     return Math.floor(Math.random() * max)
   }
+
+  // var votingArray = new Uint8Array(anecdotes.length); 
   
   const handleClick = () => {
     // console.log("array length: ", anecdotes.length)
@@ -23,12 +25,26 @@ const App = () => {
     setSelected(randomNumber)
   }
 
+  const [votingArray, setVoteArray] = useState( new Uint8Array(anecdotes.length) )
+
+  const handleVoteClick = (anecdoteIndex) => {
+
+    // make copy of voting array
+    const arrayCopy = [...votingArray]
+    // console.log(arrayCopy)
+    arrayCopy[anecdoteIndex] += 1
+    // console.log(arrayCopy[anecdoteIndex])
+    // console.log(arrayCopy)
+    setVoteArray(arrayCopy)
+  }
+
   const [selected, setSelected] = useState(0)
 
   return (
     <>
-      {anecdotes[selected]}
-      <br></br>
+      <div>{anecdotes[selected]}</div>
+      <div>has {votingArray[selected]} votes</div>
+      <button onClick={ () => handleVoteClick(selected)}>vote</button>
       <button onClick={handleClick}>next anecdote</button>
     </>
   )
