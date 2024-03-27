@@ -15,8 +15,6 @@ const App = () => {
   const getRandom = (max) => {
     return Math.floor(Math.random() * max)
   }
-
-  // var votingArray = new Uint8Array(anecdotes.length); 
   
   const handleClick = () => {
     // console.log("array length: ", anecdotes.length)
@@ -26,6 +24,15 @@ const App = () => {
   }
 
   const [votingArray, setVoteArray] = useState( new Uint8Array(anecdotes.length) )
+  const [mostVoted, setMostVoted] = useState("")
+
+  const maxVotes = (voteArray) => {
+    const mostVotes = Math.max(...voteArray) // we can improve things by not updating the anecdote if the encounter a tie
+    const idx = voteArray.indexOf(mostVotes)
+    console.log("most votes: ",mostVotes, " index: ", idx)
+    
+    setMostVoted(anecdotes[idx])
+  }
 
   const handleVoteClick = (anecdoteIndex) => {
 
@@ -36,16 +43,24 @@ const App = () => {
     // console.log(arrayCopy[anecdoteIndex])
     // console.log(arrayCopy)
     setVoteArray(arrayCopy)
+    // const mostVotes = arrayCopy.max
+    // console.log(mostVotes)
+    maxVotes(arrayCopy)
   }
 
   const [selected, setSelected] = useState(0)
 
   return (
     <>
+      <h1>Anecdote of the day</h1>
+
       <div>{anecdotes[selected]}</div>
       <div>has {votingArray[selected]} votes</div>
       <button onClick={ () => handleVoteClick(selected)}>vote</button>
       <button onClick={handleClick}>next anecdote</button>
+
+      <h1>Anecdote with the most votes</h1>
+      <div>{mostVoted}</div>
     </>
   )
 }
