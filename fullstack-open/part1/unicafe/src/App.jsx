@@ -40,7 +40,11 @@ const App = () => {
   }
 
   const StatisticLine = (props) => {
-    return <p>{props.text} {props.value}</p>
+    return ( 
+      <>
+        <td>{props.text}</td><td>{props.value}</td>
+      </> 
+    )
   }
 
   const Statistics = (props) => {
@@ -50,12 +54,16 @@ const App = () => {
     }
     return (
       <>
-        <StatisticLine text="good" value={good}/>
-        <StatisticLine text="neutral" value={neutral}/>
-        <StatisticLine text="bad" value={bad}/>
-        <StatisticLine text="all" value={all}/>
-        <StatisticLine text="average" value={average}/>
-        <StatisticLine text="positive" value={positive*100 + `%`}/>
+      <table>
+        <tbody>
+          <tr><StatisticLine text="good" value={good}/></tr>
+          <tr><StatisticLine text="neutral" value={neutral}/></tr>
+          <tr><StatisticLine text="bad" value={bad}/></tr>
+          <tr><StatisticLine text="all" value={all}/></tr>
+          <tr><StatisticLine text="average" value={average}/></tr>
+          <tr><StatisticLine text="positive" value={positive*100 + `%`}/></tr>
+        </tbody>
+      </table>
       </>
     )
   }
@@ -76,7 +84,9 @@ const App = () => {
 
       {/* statistics */}
       <h1>statistics</h1>
+      
       <Statistics good={good} neutral={neutral} bad={bad} average={average} all={all} positive={positive}/>
+      
     </div>
   )
 }
