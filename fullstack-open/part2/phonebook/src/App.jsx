@@ -1,20 +1,28 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
-
+import axios from 'axios'
 
 const App = () => {
 
+  const [persons, setPersons] = useState([])
+  
 
-  // data object
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  // our hook gets data from our json-server using axios
+  const hook = () => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        const persons = response.data
+        setPersons(persons)
+        console.log(persons)
+      })
+  }
+
+  // [] means we only want the effect to run during the first render
+  useEffect(hook,[])
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
