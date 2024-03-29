@@ -11,12 +11,25 @@ const App = () => {
     setNewName(event.target.value)
   }
 
+  const inPhonebook = (name) => {
+    const names = persons.map ((person) => person.name)
+    return names.includes(name)
+  }
+
   const addName = (event) => {
     event.preventDefault()
-    const newPersons = persons
-    newPersons.push({name: newName})
-    // console.log(newPersons)
-    setPersons(newPersons)
+
+    // check if we have this name already
+    if (inPhonebook(newName)) {
+      alert(`${newName} is already in the phonebook`)
+    } else {
+
+      const newPersons = persons
+      newPersons.push({name: newName})
+      // console.log(newPersons)
+      setPersons(newPersons)
+    }
+
     setNewName('')
   }
 
@@ -33,7 +46,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       {/* <div>debug: {newName}</div> */}
-      <div>{persons.map( (person, index) => <div key={index}>{person.name}</div>)}</div>
+      <div>{persons.map( (person) => <div key={person.name}>{person.name}</div>)}</div>
     </div>
   )
 }
