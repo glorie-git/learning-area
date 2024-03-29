@@ -1,14 +1,22 @@
 import { useState } from 'react'
 
 const App = () => {
+
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { name: 'Arto Hellas',
+      number: '040-1234567'}
   ])
+
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
 
   const handleChange = (event) => {
     // console.log(event.target.value)
     setNewName(event.target.value)
+  }
+
+  const handleNewNumber = (event) => {
+    setNewNumber(event.target.value)
   }
 
   const inPhonebook = (name) => {
@@ -16,7 +24,7 @@ const App = () => {
     return names.includes(name)
   }
 
-  const addName = (event) => {
+  const addPerson = (event) => {
     event.preventDefault()
 
     // check if we have this name already
@@ -25,20 +33,24 @@ const App = () => {
     } else {
 
       const newPersons = persons
-      newPersons.push({name: newName})
+      newPersons.push({name: newName, number: newNumber})
       // console.log(newPersons)
       setPersons(newPersons)
     }
 
     setNewName('')
+    setNewNumber('')
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={addName}>
+      <form onSubmit={addPerson}>
         <div>
           name: <input value={newName} onChange={handleChange}/>
+        </div>
+        <div>
+          number: <input value={newNumber} onChange={handleNewNumber}/>
         </div>
         <div>
           <button type="submit">add</button>
@@ -46,7 +58,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       {/* <div>debug: {newName}</div> */}
-      <div>{persons.map( (person) => <div key={person.name}>{person.name}</div>)}</div>
+      <div>{persons.map( (person) => <div key={person.name}>{person.name} {person.number}</div>)}</div>
     </div>
   )
 }
