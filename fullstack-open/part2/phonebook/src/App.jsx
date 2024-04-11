@@ -104,6 +104,21 @@ const App = () => {
     setNewNumber('')
   }
 
+  const handleDelete = (person) => {
+
+    if (window.confirm(`Delete ${person.name}?`)) {
+      const changedPersons = persons.filter ( n => n.id !== person.id)
+
+      personService.deletePerson(person.id)
+      .then ( response =>
+        setPersons(changedPersons)
+      )
+      .catch (error => {
+        alert("There was an error deleting the person")
+      })
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -118,8 +133,8 @@ const App = () => {
 
       <div>
         {filterOn ? 
-          <Persons persons={filteredPersons}/>
-          : <Persons persons={persons}/>
+          <Persons persons={filteredPersons} onDelete={handleDelete}/>
+          : <Persons persons={persons} onDelete={handleDelete}/>
         }
       </div>
 
