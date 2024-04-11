@@ -71,7 +71,10 @@ const App = () => {
   }
 
   const inPhonebook = (name) => {
-    const names = persons.map ((person) => person.name)
+    const names = persons.map((person) => person.name)
+    if (names.includes(name)) {
+      return persons.find( person => person.name === name)
+    }
     return names.includes(name)
   }
 
@@ -79,27 +82,23 @@ const App = () => {
     event.preventDefault()
 
     // check if we have this name already
-    if (inPhonebook(newName)) {
-      alert(`${newName} is already in the phonebook`)
-    } else {
-      const newPersons = persons
-      // const request = axios.post('http://localhost:3001/persons', {name: newName, number: newNumber})
-      // request
-      personService
-      .create({name: newName, number: newNumber})
-      .then (
-        newPersons.push({name: newName, number: newNumber}),
-        // console.log(newPersons)
-        setPersons(newPersons)
-      )
-      .catch ( error =>
-        alert (
-          `There was an error adding the person ${newName} ${newNumber} to phone book. Please try again.`
+    const found = inPhonebook(newName)
+    // console.log(found)
+    if (found) {
+      if (window.confirm(`${newName} is already added to phonebook. Replace old number with a new one?`)) {
+        personService.updatePerson(found.id, {...found, number: newNumber})
+        .then ( response => {
+          const newPersons = persons.map ( n => n.id !== found.id ? n : {...n, number: response.number})
+          setPersons(newPersons)
+          }
         )
-      )
-
-    }
-
+        .catch ( error =>
+          alert (
+            `There was an error adding the person ${newName} ${newNumber} to phone book. Please try again. Error ${error}`
+          )
+        )     
+      }
+    } 
     setNewName('')
     setNewNumber('')
   }
