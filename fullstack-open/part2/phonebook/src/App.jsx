@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
-import axios from 'axios'
+import personService from './services/persons'
 
 const App = () => {
 
@@ -12,12 +12,12 @@ const App = () => {
 
   // our hook gets data from our json-server using axios
   const hook = () => {
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
-        const persons = response.data
+        const persons = response
         setPersons(persons)
-        console.log(persons)
+        console.log("In hook ", persons)
       })
   }
 
@@ -82,11 +82,22 @@ const App = () => {
     if (inPhonebook(newName)) {
       alert(`${newName} is already in the phonebook`)
     } else {
-
       const newPersons = persons
-      newPersons.push({name: newName, number: newNumber})
-      // console.log(newPersons)
-      setPersons(newPersons)
+      // const request = axios.post('http://localhost:3001/persons', {name: newName, number: newNumber})
+      // request
+      personService
+      .create({name: newName, number: newNumber})
+      .then (
+        newPersons.push({name: newName, number: newNumber}),
+        // console.log(newPersons)
+        setPersons(newPersons)
+      )
+      .catch ( error =>
+        alert (
+          `There was an error adding the person ${newName} ${newNumber} to phone book. Please try again.`
+        )
+      )
+
     }
 
     setNewName('')
