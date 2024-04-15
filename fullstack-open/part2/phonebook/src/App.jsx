@@ -4,6 +4,7 @@ import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
 
@@ -17,7 +18,7 @@ const App = () => {
       .then(response => {
         const persons = response
         setPersons(persons)
-        console.log("In hook ", persons)
+        // console.log("In hook ", persons)
       })
   }
 
@@ -29,6 +30,8 @@ const App = () => {
   const [filter, setFilter] = useState('')
   const [filterOn, setFilterOn] = useState(false)
   const [filteredPersons, setFilteredPersons] = useState([])
+  const [notification, setNotification] = useState({message: null, type: "success"})
+  console.log(notification)
 
   const handleChange = (event) => {
     // console.log(event.target.value)
@@ -66,11 +69,15 @@ const App = () => {
     }
   }
 
+  // Function to update value of input element
   const handleNewNumber = (event) => {
     setNewNumber(event.target.value)
   }
 
+  // Function to search for a name in the phonebook
+  // Return: bool
   const inPhonebook = (name) => {
+
     const names = persons.map((person) => person.name)
     if (names.includes(name)) {
       return persons.find( person => person.name === name)
@@ -78,18 +85,21 @@ const App = () => {
     return names.includes(name)
   }
 
+  // Function adds a person into the phonebook
   const addPerson = (event) => {
     event.preventDefault()
 
     // check if we have this name already
     const found = inPhonebook(newName)
-    // console.log(found)
+
     if (found) {
+
+       // Name is already in the phonebook
       if (window.confirm(`${newName} is already added to phonebook. Replace old number with a new one?`)) {
         personService.updatePerson(found.id, {...found, number: newNumber})
         .then ( response => {
-          const newPersons = persons.map ( n => n.id !== found.id ? n : {...n, number: response.number})
-          setPersons(newPersons)
+
+          console.log(`update person response: ${response}`)
           }
         )
         .catch ( error =>
@@ -98,7 +108,32 @@ const App = () => {
           )
         )     
       }
-    } 
+    } else {
+
+        // Add a person who is not already in phone book
+        const newPerson = {name: newName, number: newNumber}
+        personService.create(newPerson)
+        .then ( response => {
+          console.log(response)
+          const newPersons = persons
+          newPersons.push(newPerson)
+
+          setNotification({message: `${newName} has been successfully added.`, type: "success"})
+          setTimeout(() => {
+            setNotification({message: null, type: ""})
+          }, 5000)
+
+          setPersons(newPersons)
+          }
+        )
+        .catch ( error =>
+          alert (
+            `There was an error adding the person ${newName} ${newNumber} to phone book. Please try again. Error ${error}`
+          ),
+          setNotification({message: `There was an error adding ${newName}.`, type: "error"})
+        )     
+      }
+
     setNewName('')
     setNewNumber('')
   }
@@ -107,29 +142,29 @@ const App = () => {
 
     if (window.confirm(`Delete ${person.name}?`)) {
       const changedPersons = persons.filter ( n => n.id !== person.id)
-
       personService.deletePerson(person.id)
       .then ( response =>
         setPersons(changedPersons)
       )
       .catch (error => {
-        alert("There was an error deleting the person")
+        alert(`There was an error deleting the person. Error: ${error}`)
       })
     }
+  }
+
+  const displayNotification = () => {
+
+
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <Notification message={notification.message} type={notification.type}/>
       <Filter value={filter} onChange={handleFilter}/>
-
       <h2>add a new</h2>
-
       <PersonForm onSubmit={addPerson} name={newName} number={newNumber} nameHandler={handleChange} numberHandler={handleNewNumber}/>
-
       <h2>Numbers</h2>
-
       <div>
         {filterOn ? 
           <Persons persons={filteredPersons} onDelete={handleDelete}/>
