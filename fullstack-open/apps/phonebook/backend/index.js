@@ -1,8 +1,6 @@
 const express = require('express')
 const app = express()
 
-app.use(express.json())
-
 let phonebook = [
     { 
       "id": 1,
@@ -25,6 +23,25 @@ let phonebook = [
       "number": "39-23-6423122"
     }
 ]
+
+// middleware to log all requests to console
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method);
+  console.log('Path:  ', request.path);
+  console.log('Body:  ', request.body);
+  console.log('---')
+  next();
+}
+
+app.use(express.json());
+app.use(requestLogger);
+
+// middleware to catch any un configured endpoints
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
 
 app.get('/api/persons', (request, response) => {
     response.json(phonebook);
