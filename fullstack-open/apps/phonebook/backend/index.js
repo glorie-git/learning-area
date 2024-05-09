@@ -33,18 +33,15 @@ app.get('/api/persons', (request, response) => {
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id);
     const person = phonebook.find (person => Number(person.id) === id);
-
     if (person) {
         response.json(person);
     } else {
         response.status(404).end();
     }
-
 })
 
 function generateID () {
   const randomId = Math.floor(Math.random() * 10000000);
-  // console.log(randomId);
   return randomId;
 }
 
@@ -67,26 +64,14 @@ app.post('/api/persons', (request, response) => {
     number: body.number,
   }
   console.log(person);
-
   phonebook = phonebook.concat(person);
-
   response.json(person);
 })
 
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id);
-
-    // const person = phonebook.find (person => Number(person.id) === id);
     phonebook = phonebook.filter (person => Number(person.id) !== id);
     response.status(204).end();
-
-
-    // if (person) {
-    //     response.json(person);
-    // } else {
-    //     response.status(404).end();
-    // }
-
 })
 
 const PORT = 3001
@@ -99,6 +84,5 @@ app.get('/info', (request, response) => {
     const numInfo = phonebook.length;
     const d = new Date(Date.now());
     const content = `<p>Phonebook has info for ${numInfo} people</p><p>${d}</p>`;
-
     response.send(content);
 })
