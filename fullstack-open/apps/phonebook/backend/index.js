@@ -6,7 +6,7 @@ var morgan = require('morgan');
 
 morgan.token('new', function (req, res) { 
   if (req.method === 'POST'){
-    return `{"name":"${req.body.name}", "number":"${req.body.number}"}`
+    return JSON.stringify(req.body);
   }
 });
 
