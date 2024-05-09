@@ -1,5 +1,14 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
+
+app.use(express.json());
+var morgan = require('morgan');
+app.use(morgan('tiny'));
+
+// middleware to catch any un configured endpoints
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
 
 let phonebook = [
     { 
@@ -23,25 +32,6 @@ let phonebook = [
       "number": "39-23-6423122"
     }
 ]
-
-// middleware to log all requests to console
-const requestLogger = (request, response, next) => {
-  console.log('Method:', request.method);
-  console.log('Path:  ', request.path);
-  console.log('Body:  ', request.body);
-  console.log('---')
-  next();
-}
-
-app.use(express.json());
-app.use(requestLogger);
-
-// middleware to catch any un configured endpoints
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
-
-app.use(unknownEndpoint)
 
 app.get('/api/persons', (request, response) => {
     response.json(phonebook);
@@ -120,3 +110,5 @@ app.get('/info', (request, response) => {
     const content = `<p>Phonebook has info for ${numInfo} people</p><p>${d}</p>`;
     response.send(content);
 })
+
+app.use(unknownEndpoint)
