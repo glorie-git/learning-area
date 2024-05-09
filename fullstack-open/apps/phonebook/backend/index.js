@@ -48,13 +48,29 @@ function generateID () {
 app.post('/api/persons', (request, response) => {
   const body = request.body;
 
+  // Error handling for creating new entries
   if (!body.name) {
     return response.status(400).json({
-      error: 'content missing'
+      error: 'name missing'
     })
   } else if (!body.number) {
     return response.status(400).json({
       error: 'number missing'
+    })
+  }
+
+  let foundDuplicate = false;
+
+  // Check if name already exists
+  phonebook.forEach(person => {
+    if (body.name === person.name){
+      console.log("Duplicate found.");
+      return foundDuplicate = true;
+    }
+  });
+  if (foundDuplicate) {
+    return response.status(400).json({
+      error: 'name must be unique'
     })
   }
 
@@ -63,6 +79,7 @@ app.post('/api/persons', (request, response) => {
     name: body.name,
     number: body.number,
   }
+
   console.log(person);
   phonebook = phonebook.concat(person);
   response.json(person);
