@@ -3,7 +3,14 @@ const app = express();
 
 app.use(express.json());
 var morgan = require('morgan');
-app.use(morgan('tiny'));
+
+morgan.token('new', function (req, res) { 
+  if (req.method === 'POST'){
+    return `{"name":"${req.body.name}", "number":"${req.body.number}"}`
+  }
+});
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :new'));
 
 // middleware to catch any un configured endpoints
 const unknownEndpoint = (request, response) => {
