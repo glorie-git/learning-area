@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
+app.use(express.static('dist'));
 
 // To access the data easily, we need the help of the Express json-parser
 app.use(express.json());
