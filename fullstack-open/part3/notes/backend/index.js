@@ -1,6 +1,7 @@
 // A function that is used to create an Express application stored in the app variable
-const express = require('express')
+const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
@@ -9,23 +10,42 @@ app.use(express.static('dist'));
 // To access the data easily, we need the help of the Express json-parser
 app.use(express.json());
 
-let notes = [
-    {
-        id: 1,
-        content: "HTML is easy",
-        important: true
-    },
-    {
-        id: 2,
-        content: "Browser can execute only JavaScript",
-        important: false
-    },
-    {
-        id: 3,
-        content: "GET and POST are the most important methods of HTTP protocol",
-        important: true
-    }
-]
+// MongoDB
+const mongoose = require('mongoose');
+
+const password = process.env.PASSWORD;
+
+// DO NOT SAVE YOUR PASSWORD TO GITHUB!!
+const url =
+  `mongodb+srv://dev:${password}@cluster0.6hdkwli.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster0`
+
+mongoose.set('strictQuery',false)
+mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  important: Boolean,
+})
+
+const Note = mongoose.model('Note', noteSchema)
+
+// let notes = [
+//     {
+//         id: 1,
+//         content: "HTML is easy",
+//         important: true
+//     },
+//     {
+//         id: 2,
+//         content: "Browser can execute only JavaScript",
+//         important: false
+//     },
+//     {
+//         id: 3,
+//         content: "GET and POST are the most important methods of HTTP protocol",
+//         important: true
+//     }
+// ]
 
 // Define two routes to the application
 app.get('/', (request, response) => {
@@ -33,7 +53,9 @@ app.get('/', (request, response) => {
   })
   
 app.get('/api/notes', (request, response) => {
-  response.json(notes);
+  Note.find({}).then(notes => {
+    response.json(notes);
+  })
 })
 
 app.get('/api/notes/:id', (request, response) => {
