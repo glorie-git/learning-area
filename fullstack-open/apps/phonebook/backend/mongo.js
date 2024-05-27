@@ -1,16 +1,16 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
-
 // console.log(process.argv.length);
 const argLength = process.argv.length;
 
-if (argLength < 3) {
-    console.log('give password as argument');
-    process.exit(1);
-}
+// if (argLength < 3) {
+//     console.log('give password as argument');
+//     process.exit(1);
+// }
 
-const password = process.argv[2];
-const url =
-  `mongodb+srv://dev:${password}@cluster0.6hdkwli.mongodb.net/phonebookApp?retryWrites=true&w=majority&appName=Cluster0`
+const password = process.env.PASSWORD;
+const url = process.env.MONGODB_URI;
+
 mongoose.set('strictQuery',false);
 mongoose.connect(url);
 

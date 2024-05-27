@@ -1,3 +1,6 @@
+require('dotenv').config();
+const Person = require('./models/phonebook');
+
 const express = require('express');
 const app = express();
 
@@ -42,7 +45,9 @@ let phonebook = [
 ]
 
 app.get('/api/persons', (request, response) => {
-    response.json(phonebook);
+    Person.find({}).then(people => {
+      response.json(people);
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
