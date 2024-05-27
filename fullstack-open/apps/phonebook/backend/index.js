@@ -79,30 +79,15 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  let foundDuplicate = false;
-
-  // Check if name already exists
-  phonebook.forEach(person => {
-    if (body.name === person.name){
-      console.log("Duplicate found.");
-      return foundDuplicate = true;
-    }
-  });
-  if (foundDuplicate) {
-    return response.status(400).json({
-      error: 'name must be unique'
-    })
-  }
-
-  const person = {
-    id: generateID(),
+  const person = Person({
     name: body.name,
     number: body.number,
-  }
+  })
 
-  console.log(person);
-  phonebook = phonebook.concat(person);
-  response.json(person);
+  person.save().then(savedPerson => {
+    response.json(savedPerson);
+  })
+
 })
 
 app.delete('/api/persons/:id', (request, response) => {
