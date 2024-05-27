@@ -60,15 +60,15 @@ app.post('/api/notes', (request, response) => {
     })
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
-    important: Boolean(body.important) || false,
-    id: generateId(),
-  }
+    important: body.important || false,
+  })
   
-  notes = notes.concat(note)
+  note.save().then(savedNote => {
+    response.json(savedNote);
+  })
 
-  response.json(note);
 })
   
 const PORT = process.env.PORT || 3001;
