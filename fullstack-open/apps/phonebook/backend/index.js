@@ -60,11 +60,6 @@ app.get('/api/persons/:id', (request, response) => {
     }
 })
 
-function generateID () {
-  const randomId = Math.floor(Math.random() * 10000000);
-  return randomId;
-}
-
 app.post('/api/persons', (request, response) => {
   const body = request.body;
 
