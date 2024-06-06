@@ -31,7 +31,7 @@ const App = () => {
   const [filterOn, setFilterOn] = useState(false)
   const [filteredPersons, setFilteredPersons] = useState([])
   const [notification, setNotification] = useState({message: null, type: "success"})
-  console.log(notification)
+  // console.log(notification)
 
   const handleChange = (event) => {
     // console.log(event.target.value)
@@ -99,8 +99,27 @@ const App = () => {
         personService.updatePerson(found.id, {...found, number: newNumber})
         .then ( response => {
 
-          console.log(`update person response: ${response}`)
+          const name = response.name;
+          const newNumber = response.number;
+          const newPerson = {name: name, number: newNumber};
+          const newPersons = persons;
+
+          newPersons.forEach( person => {
+            if (person.name === name) {
+              person.number = newNumber;
+            } else {
+              // Do nothing
+            }
+          })
+
+          setNotification({message: `${name}'s phone number has been successfully updated to ${newNumber}.`, type: "success"})
+          setTimeout(() => {
+            setNotification({message: null, type: ""})
+          }, 5000)
+
+          setPersons(newPersons);
           }
+
         )
         .catch ( error =>
           alert (
