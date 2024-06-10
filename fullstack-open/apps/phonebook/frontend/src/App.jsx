@@ -18,7 +18,6 @@ const App = () => {
       .then(response => {
         const persons = response
         setPersons(persons)
-        // console.log("In hook ", persons)
       })
   }
 
@@ -129,10 +128,12 @@ const App = () => {
       }
     } else {
 
-        // Add a person who is not already in phone book
-        const newPerson = {name: newName, number: newNumber}
-        personService.create(newPerson)
-        .then ( response => {
+      // Add a person who is not already in phone book
+      const newPerson = {name: newName, number: newNumber}
+
+      personService
+        .create(newPerson)
+        .then( response => {
           console.log(response)
           const newPersons = persons
           newPersons.push(newPerson)
@@ -141,15 +142,18 @@ const App = () => {
           setTimeout(() => {
             setNotification({message: null, type: ""})
           }, 5000)
-
           setPersons(newPersons)
           }
         )
-        .catch ( error =>
-          alert (
-            `There was an error adding the person ${newName} ${newNumber} to phone book. Please try again. Error ${error}`
-          ),
+        .catch ( error =>{
           setNotification({message: `There was an error adding ${newName}.`, type: "error"})
+          setTimeout(() => {
+            setNotification({message: null, type: ""})
+          }, 5000)
+
+          alert (
+            `There was an error adding the person names: ${newName} and number: ${newNumber} to phone book. Please try again. Error: ${error.response.data.error}`,
+          )}
         )     
       }
 
