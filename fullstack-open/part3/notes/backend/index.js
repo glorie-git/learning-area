@@ -15,7 +15,7 @@ app.use(express.json());
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
   })
-  
+
 app.get('/api/notes', (request, response) => {
   Note.find({}).then(notes => {
     response.json(notes);
@@ -62,6 +62,7 @@ app.put('/api/notes/:id', (request, response, next) => {
 
 app.post('/api/notes', (request, response, next) => {
   const body = request.body;
+
   if (!body.content) {
     return response.status(400).json({
       error: 'content missing'
@@ -100,14 +101,3 @@ const errorHandler = (error, request, response, next) => {
 
 // this has to be the last loaded middleware, also all the routes should be registered before this!
 app.use(errorHandler);
-
-// Simple Web Server
-
-//   const app = http.createServer((request, response) => {
-//     response.writeHead(200, { 'Content-Type': 'application/json' })
-//     response.end(JSON.stringify(notes))
-//   })
-  
-//   const PORT = 3001
-//   app.listen(PORT)
-//   console.log(`Server running on port ${PORT}`)
