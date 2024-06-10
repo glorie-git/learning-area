@@ -49,14 +49,6 @@ app.get('/api/persons/:id', (request, response, next) => {
 app.put('/api/persons/:id', (request, response, next) => {
   const {name, number} = request.body;
 
-  // const person = {
-  //   name: body.name,
-  //   number: body.number,
-  // }
-
-  // id has a curly brace at the end for some reason
-  // const id = request.params.id;
-
   Person.findByIdAndUpdate(request.params.id,
     {name, number},
     {new: true, runValidators: true, context: 'query'}
@@ -80,6 +72,7 @@ app.post('/api/persons', (request, response, next) => {
       error: 'number missing'
     })
   }
+
 
   const person = Person({
     name: body.name,
@@ -126,5 +119,5 @@ const errorHandler = (error, request, response, next) => {
   next(error);
 }
 
-// this has to be the last loaded middleware, also all the routes should be registered before this!
+// This has to be the last loaded middleware, also all the routes should be registered before this!
 app.use(errorHandler);
