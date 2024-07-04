@@ -8,7 +8,7 @@ app.use(express.json())
 var morgan = require('morgan')
 app.use(express.static('dist'))
 
-morgan.token('new', function (request, response) {
+morgan.token('new', function (request) {
   if (request.method === 'POST'){
     return JSON.stringify(request.body)
   }
@@ -102,10 +102,17 @@ app.listen(PORT, () => {
 })
 
 app.get('/info', (request, response) => {
-  const numInfo = phonebook.length
-  const d = new Date(Date.now())
-  const content = `<p>Phonebook has info for ${numInfo} people</p><p>${d}</p>`
-  response.send(content)
+  Person.find({}).then (result => {
+    console.log(result)
+    if (result) {
+      const numInfo = result.length
+      const d = new Date(Date.now())
+      const content = `<p>Phonebook has info for ${numInfo} people</p><p>${d}</p>`
+      response.send(content)
+    } else {
+      console.log(result)
+    }
+  })
 })
 
 app.use(unknownEndpoint)
