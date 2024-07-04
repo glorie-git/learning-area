@@ -1,14 +1,7 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
-// console.log(process.argv.length);
 const argLength = process.argv.length
 
-// if (argLength < 3) {
-//     console.log('give password as argument');
-//     process.exit(1);
-// }
-
-const password = process.env.PASSWORD
 const url = process.env.MONGODB_URI
 
 mongoose.set('strictQuery',false)
@@ -40,7 +33,7 @@ if (argLength === 3) {
     number: number,
   })
 
-  person.save().then(result => {
+  person.save().then( () => {
     console.log (`Added ${name} number ${number} to phonebook.`)
     mongoose.connection.close()
   })

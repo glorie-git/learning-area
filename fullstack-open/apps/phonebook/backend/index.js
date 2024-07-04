@@ -8,9 +8,9 @@ app.use(express.json())
 var morgan = require('morgan')
 app.use(express.static('dist'))
 
-morgan.token('new', function (req, res) {
-  if (req.method === 'POST'){
-    return JSON.stringify(req.body)
+morgan.token('new', function (request, response) {
+  if (request.method === 'POST'){
+    return JSON.stringify(request.body)
   }
 })
 
@@ -87,9 +87,9 @@ app.post('/api/persons', (request, response, next) => {
 
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
