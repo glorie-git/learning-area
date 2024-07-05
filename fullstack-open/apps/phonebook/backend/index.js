@@ -1,5 +1,9 @@
 require('dotenv').config()
-const Person = require('./models/phonebook')
+const config = require('./utils/config')
+const mongoose = require('mongoose')
+// const Person = require('./models/phonebook')
+
+const phonebookRouter = require('./controllers/phonebook')
 
 const express = require('express')
 const app = express()
@@ -21,98 +25,23 @@ const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
-app.get('/api/persons', (request, response, next) => {
-  Person.find({})
-    .then(people => {
-      if (people) {
-        response.json(people)
-      } else {
-        response.status(404).end()
-      }
-    })
-    .catch(error => next(error))
-})
+console.log('Connecting to MongoDB...')
 
-app.get('/api/persons/:id', (request, response, next) => {
-  Person.findById(request.params.id)
-    .then(person => {
-      if (person){
-        response.json(person)
-      } else {
-        response.status(404).end()
-      }
-    })
-    .catch ( error => next(error))
-}
-)
+mongoose.set('strictQuery',false)
 
-app.put('/api/persons/:id', (request, response, next) => {
-  const { name, number } = request.body
-
-  Person.findByIdAndUpdate(request.params.id,
-    { name, number },
-    { new: true, runValidators: true, context: 'query' }
-  )
-    .then(updatedPerson => {
-      response.json(updatedPerson)
-    })
-    .catch(error => next(error))
-})
-
-app.post('/api/persons', (request, response, next) => {
-  const body = request.body
-
-  // Error handling for creating new entries
-  if (!body.name) {
-    return response.status(400).json({
-      error: 'name missing'
-    })
-  } else if (!body.number) {
-    return response.status(400).json({
-      error: 'number missing'
-    })
+mongoose.connect(config.MONGODB_URI)
+  .then(() => {
+    console.log('Connected to MongoDB!')
+  })
+  .catch(error => {
+    console.log('Error connecting to MongoDB:', error.message)
   }
+  )
 
+app.use('/api/phonebook/', phonebookRouter)
 
-  const person = Person({
-    name: body.name,
-    number: body.number,
-  })
-
-  person.save()
-    .then(savedPerson => {
-      response.json(savedPerson)
-    })
-    .catch(error => next(error))
-
-})
-
-app.delete('/api/persons/:id', (request, response, next) => {
-  Person.findByIdAndDelete(request.params.id)
-    .then(() => {
-      response.status(204).end()
-    })
-    .catch(error => next(error))
-})
-
-const PORT = 3001
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}.`)
-})
-
-app.get('/info', (request, response) => {
-  Person.find({}).then (result => {
-    console.log(result)
-    if (result) {
-      const numInfo = result.length
-      const d = new Date(Date.now())
-      const content = `<p>Phonebook has info for ${numInfo} people</p><p>${d}</p>`
-      response.send(content)
-    } else {
-      console.log(result)
-    }
-  })
+app.listen(config.PORT, () => {
+  console.log(`Server running on port ${config.PORT}.`)
 })
 
 app.use(unknownEndpoint)
