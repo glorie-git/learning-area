@@ -1,17 +1,17 @@
 require('dotenv').config()
+
 const config = require('./utils/config')
 const mongoose = require('mongoose')
-// const Person = require('./models/phonebook')
-
 const phonebookRouter = require('./controllers/phonebook')
+const logger = require('./utils/logger')
 
 const express = require('express')
 const app = express()
 
 app.use(express.json())
-var morgan = require('morgan')
 app.use(express.static('dist'))
 
+var morgan = require('morgan')
 morgan.token('new', function (request) {
   if (request.method === 'POST'){
     return JSON.stringify(request.body)
@@ -25,23 +25,23 @@ const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
-console.log('Connecting to MongoDB...')
+logger.info('Connecting to MongoDB...')
 
 mongoose.set('strictQuery',false)
 
 mongoose.connect(config.MONGODB_URI)
   .then(() => {
-    console.log('Connected to MongoDB!')
+    logger.info('Connected to MongoDB!')
   })
   .catch(error => {
-    console.log('Error connecting to MongoDB:', error.message)
+    logger.error('Error connecting to MongoDB:', error.message)
   }
   )
 
 app.use('/api/phonebook/', phonebookRouter)
 
 app.listen(config.PORT, () => {
-  console.log(`Server running on port ${config.PORT}.`)
+  logger.info(`Server running on port ${config.PORT}.`)
 })
 
 app.use(unknownEndpoint)
